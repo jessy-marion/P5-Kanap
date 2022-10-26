@@ -11,8 +11,8 @@ fetch("http://localhost:3000/api/products")
     let products = value;
     console.log(products);
     for (let i = 0; i < products.length; i++) {
-      let productLink = document.createElement("a"); //no sabe
-      // productLink.setAttribute("href", `./product.html?${products[i]._id}`);
+      let productLink = document.createElement("a");
+      productLink.setAttribute("href", `./product.html?id=${products[i]._id}`);
       let article = document.createElement("article");
       let productImg = document.createElement("img");
       productImg.setAttribute("src", `${products[i].imageUrl}`);
@@ -33,7 +33,7 @@ fetch("http://localhost:3000/api/products")
     console.error("ERREUR CRITIQUE");
     let errorMessage = document.createElement("p");
     errorMessage.innerHTML =
-      "Veuillez nous excuser, il nous ai impossible d'affcher les articles pourle moment";
+      "Veuillez nous excuser, il nous ai impossible d'afficher les articles pour le moment";
     productSection.append(errorMessage);
   });
 

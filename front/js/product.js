@@ -1,8 +1,10 @@
+//Get the id of the selected product
 const productID = new URL(window.location.href).searchParams.get("id");
 
 let colorsChoice = document.getElementById("colors");
 let quantityInput = document.getElementById("quantity");
 
+// fetch the api and take only the selected product/object
 function fetchProduct() {
   fetch("http://localhost:3000/api/products")
     .then((res) => {
@@ -20,6 +22,7 @@ function fetchProduct() {
     .then((selectedProduct) => {
       insertElements(selectedProduct);
 
+      //choose color/quantity & save the datas in an object
       let color = "none";
       colorsChoice.addEventListener("change", (e) => {
         color = e.target.value;
@@ -43,6 +46,7 @@ function fetchProduct() {
     });
 }
 
+//insert all HTML/DOM elements
 function insertElements(product) {
   let imgContainer = document.querySelector(".item__img");
   let productImg = document.createElement("img");
@@ -65,10 +69,12 @@ function insertElements(product) {
   imgContainer.append(productImg);
 }
 
+//take the object and convert it in JSON
 function saveCart(cart) {
   localStorage.setItem("cart", JSON.stringify(cart));
 }
 
+//create an array on the LocalStorage or convert JSON => obj
 function getCart() {
   let cart = localStorage.getItem("cart");
   if (cart == null) {
@@ -78,6 +84,7 @@ function getCart() {
   }
 }
 
+//get the product
 function addCart(product) {
   let cart = getCart();
   console.log(cart);
@@ -96,3 +103,6 @@ function addCart(product) {
 }
 
 fetchProduct();
+
+// ne pas enregistrer les prix sur le localstorage !!!
+// le title de la page HTML n'est pas défini !!!

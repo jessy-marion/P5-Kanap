@@ -23,7 +23,7 @@ function fetchProduct() {
       insertElements(selectedProduct);
 
       //choose color/quantity & save the datas in an object
-      let color = "none";
+      let color = null;
       colorsChoice.addEventListener("change", (e) => {
         color = e.target.value;
       });
@@ -32,22 +32,31 @@ function fetchProduct() {
         "input",
         (e) => (quantity = e.target.value)
       );
+      console.log(color);
       const addToCartBtn = document.getElementById("addToCart");
       addToCartBtn.addEventListener("click", (e) => {
-        let product = {
-          id: selectedProduct._id,
-          price: selectedProduct.price,
-          color: color,
-          quantity: parseInt(quantity),
-        };
+        // test si pas quantité ni couleur
+        if (color != "none" && quantity > 0) {
+          let product = {
+            id: selectedProduct._id,
+            //price: selectedProduct.price, enlever le prix !!
+            color: color,
+            quantity: parseInt(quantity),
+          };
+          addCart(product);
+        } else {
+          console.error("pas de quantité ni couleurs");
+        }
 
-        addCart(product);
+        //test
       });
     });
 }
 
 //insert all HTML/DOM elements
 function insertElements(product) {
+  document.title = `${product.name}`;
+
   let imgContainer = document.querySelector(".item__img");
   let productImg = document.createElement("img");
   productImg.setAttribute("src", `${product.imageUrl}`);

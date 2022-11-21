@@ -1,26 +1,22 @@
-//get data on the LocalStorage
+/******** cart ***********/
+
+//get data inside the LocalStorage
 const cart = JSON.parse(localStorage.getItem("cart"));
 
 let cartSection = document.getElementById("cart__items");
 let totalQuantity = document.getElementById("totalQuantity");
-totalQuantity.innerText = `${cart.reduce((acc, obj) => {
-  return acc + obj.quantity;
-}, 0)}`;
+totalQuantity.innerText = `0`;
+
 let totalPrice = document.getElementById("totalPrice");
 let allPrices = [];
 let productId = [];
 let dataOrder = {
-  contact: {
-    firstName: firstName,
-    lastName: lastName,
-    address: address,
-    city: city,
-    email: email,
-  },
+  contact: {},
   products: productId,
 };
 
-let onlyLetters = /^[a-z,.'-]+$/i; // pas d'espacement ?
+//regex
+let onlyLetters = /^[a-z,.'-]+$/i; 
 let numbersAndLetters = /^[a-z\d\s,'-]+$/i;
 let emailRegEx = /[\w-]+[\w\.-]*@[\w-]{2,}\.[a-z-]+/i;
 
@@ -33,15 +29,16 @@ function fetchProduct() {
       }
     })
     .then((products) => {
+      
       calculateCart(products);
-      console.log("b");
-      form();
-    });
-  console.log("a");
+    })
 }
-// recupere le prix d'un produit et le multiplie par la qyuantité
+
+// calculate price & quantity
 function calculateCart(products) {
+  if (cart) {     // []
   cartSection.innerHTML = "";
+  totalPrice.innerHTML = "0"; // innerHTML
   allPrices = [];
   cart.forEach((article, index) => {
     for (let i = 0; i < products.length; i++) {
@@ -58,21 +55,21 @@ function calculateCart(products) {
     return acc + obj.quantity;
   }, 0)}`;
 }
-// à finalister post ID & customer  =>
+}
+
+// ordering & get orderId
 function order() {
   let order = document.getElementById("order");
-  order.addEventListener("click", async (e) => {
+  order.addEventListener("click", (e) => {
     e.preventDefault();
 
     JSON.parse(localStorage.getItem("cart")).forEach((id, i) => {
       productId.push(JSON.parse(localStorage.getItem("cart"))[i].id);
     });
-    console.log(dataOrder);
-    console.log(productId);
 
     //post to server
-    const postToServer = await fetch(
-      "http://localhost:3000/api/products/order/",
+    fetch( // supprimer const & await
+      "http://localhost:3000/api/products/order",
       {
         method: "POST",
         body: JSON.stringify(dataOrder),
@@ -80,17 +77,27 @@ function order() {
           "Content-Type": "application/json",
         },
       }
-    );
-    console.log(postToServer);
+    )
+    .then((res) => {
+      if (res.ok) {
+        return res.json()
+      }
+    })
+    .then((data) => {
+        window.location.href = `./confirmation.html?id=${data.orderId}`
+    });
+   
+
+    
   });
 }
 
-//validation formulaire et message d'erreurs // focusout est daté => utiliser onblur
+//form validation => utiliser onblur
 function form() {
   let firstName = document.getElementById("firstName");
   let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 
-  firstName.addEventListener("focusout", (e) => {
+  firstName.addEventListener("change", (e) => { // remplacer par change "event"
     if (onlyLetters.test(e.target.value)) {
       dataOrder.contact.firstName = e.target.value;
       firstNameErrorMsg.innerText = "";
@@ -102,7 +109,7 @@ function form() {
   let lastName = document.getElementById("lastName");
   let lastNameErrorMsg = document.getElementById("lastNameErrorMsg");
 
-  lastName.addEventListener("focusout", (e) => {
+  lastName.addEventListener("change", (e) => {
     if (onlyLetters.test(e.target.value)) {
       dataOrder.contact.lastName = e.target.value;
       lastNameErrorMsg.innerText = "";
@@ -114,31 +121,31 @@ function form() {
   let address = document.getElementById("address");
   let addressErrorMsg = document.getElementById("addressErrorMsg");
 
-  address.addEventListener("focusout", (e) => {
+  address.addEventListener("change", (e) => {
     if (numbersAndLetters.test(e.target.value)) {
       dataOrder.contact.address = e.target.value;
       addressErrorMsg.innerText = "";
     } else {
-      addressErrorMsg.innerText = `${e.target.value} n'est pas un nom valide`;
+      addressErrorMsg.innerText = `${e.target.value} n'est pas une adresse valide`;
     }
   });
 
   let city = document.getElementById("city");
   let cityErroMsg = document.getElementById("cityErrorMsg");
 
-  city.addEventListener("focusout", (e) => {
+  city.addEventListener("change", (e) => {
     if (onlyLetters.test(e.target.value)) {
       dataOrder.contact.city = e.target.value;
       cityErroMsg.innerText = "";
     } else {
-      cityErroMsg.innerText = `${e.target.value} n'est pas un nom valide`;
+      cityErroMsg.innerText = `${e.target.value} n'est pas un lieu valide`;
     }
   });
 
   let email = document.getElementById("email");
   let emailErrorMsg = document.getElementById("emailErrorMsg");
 
-  email.addEventListener("focusout", (e) => {
+  email.addEventListener("change", (e) => {
     if (emailRegEx.test(e.target.value)) {
       dataOrder.contact.email = e.target.value;
       emailErrorMsg.innerText = "";
@@ -147,7 +154,7 @@ function form() {
     }
   });
 }
-//insert HTML/ DOM elements// !!!!!!!Change cart ==>> selectedProduct!!!!!!!
+//insert HTML/ DOM elements
 function insertElements(element, cart) {
   let product = document.createElement("article");
   product.classList.add("cart__item");
@@ -182,7 +189,7 @@ function insertElements(element, cart) {
   input.setAttribute("name", `itemQuantity`);
   input.setAttribute("min", `1`);
   input.setAttribute("max", `100`);
-  input.setAttribute("value", `0`); //à completer
+  input.setAttribute("value", `0`); 
   input.classList.add("itemQuantity");
   let cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettingsDelete.classList.add(
@@ -213,7 +220,8 @@ function change(element, quantity, selectedProduct) {
   element.addEventListener("change", (e) => {
     if (
       element.closest("article").dataset.id == selectedProduct.id &&
-      element.closest("article").dataset.color == selectedProduct.color
+      element.closest("article").dataset.color == selectedProduct.color &&
+      e.target.value != ""
     ) {
       cart[cart.indexOf(selectedProduct)].quantity = parseInt(e.target.value);
       localStorage.setItem("cart", JSON.stringify(cart));
@@ -221,7 +229,7 @@ function change(element, quantity, selectedProduct) {
       selectedProduct.quantity = parseInt(e.target.value);
       fetchProduct();
       quantity.innerText = `Qté : ${
-        cart[cart.indexOf(selectedProduct)].quantity // pas trouvé mieux...
+        cart[cart.indexOf(selectedProduct)].quantity 
       }`;
     }
   });
@@ -230,14 +238,17 @@ function change(element, quantity, selectedProduct) {
 // delete a product in the cart
 function del(element, selectedProduct) {
   element.addEventListener("click", () => {
+
     if (
       element.closest("article").dataset.id == selectedProduct.id &&
-      element.closest("article").dataset.color == selectedProduct.color
+      element.closest("article").dataset.color == selectedProduct.color &&
+      cart.length > 1
     ) {
       cart.splice(cart.indexOf(selectedProduct), 1);
       localStorage.setItem("cart", JSON.stringify(cart));
 
       element.closest("article").remove();
+      fetchProduct();
 
       allPrices.splice(cart.indexOf(selectedProduct), 1);
       totalPrice.innerText = `${allPrices.reduce((acc, obj) => {
@@ -246,11 +257,30 @@ function del(element, selectedProduct) {
       totalQuantity.innerText = `${cart.reduce((acc, obj) => {
         return acc + obj.quantity;
       }, 0)}`;
-    } else {
-      console.error("non");
+    }
+    else if (cart.length == 1) {
+      cart.splice(cart.indexOf(selectedProduct), 1);
+      localStorage.setItem("cart", JSON.stringify(cart));
+      localStorage.clear();
+      element.closest("article").remove();
+      allPrices = [];
+      totalPrice.innerText = "0"
+      totalQuantity.innerText = "0"
+
     }
   });
 }
 
-fetchProduct();
+
+if (cart) {       
+  fetchProduct(); 
+  totalQuantity.innerText = `${cart.reduce((acc, obj) => {
+    return acc + obj.quantity;
+  }, 0)}`;
+} else {
+  totalQuantity.innerText = "0";
+}
+
+
+form();
 order();

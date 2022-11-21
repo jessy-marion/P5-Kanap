@@ -1,18 +1,16 @@
-//select parent tag
+/******** index ***********/
 
 const productSection = document.getElementById("items");
 
-//get API array, browse it & display the html with createProduct()
+//get array products, then browse it & display the html with createProduct()
 
 fetch("http://localhost:3000/api/products")
   .then((res) => {
-    console.log(res);
     if (res.ok) {
       return res.json();
     }
   })
   .then((products) => {
-    console.log(products);
     for (let i = 0; i < products.length; i++) {
       createProduct(products[i]);
     }
@@ -25,7 +23,8 @@ fetch("http://localhost:3000/api/products")
     productSection.append(errorMessage);
   });
 
-//this function create the html elements/attributes/nodes
+
+// HTML elements/attributes/nodes
 
 function createProduct(product) {
   let productLink = document.createElement("a");

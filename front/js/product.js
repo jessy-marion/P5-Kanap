@@ -1,8 +1,11 @@
-//Get the id of the selected product
-const productID = new URL(window.location.href).searchParams.get("id");
+/******** product ***********/
 
 let colorsChoice = document.getElementById("colors");
 let quantityInput = document.getElementById("quantity");
+
+//Get the id of the selected product on the URL
+const productID = new URL(window.location.href).searchParams.get("id");
+
 
 // fetch the api and take only the selected product/object
 function fetchProduct() {
@@ -21,9 +24,10 @@ function fetchProduct() {
     })
     .then((selectedProduct) => {
       insertElements(selectedProduct);
+      
 
-      //choose color/quantity & save the datas in an object
-      let color = null;
+      // color/quantity selection & save the datas in an object
+      // let color = null;
       colorsChoice.addEventListener("change", (e) => {
         color = e.target.value;
       });
@@ -32,28 +36,30 @@ function fetchProduct() {
         "input",
         (e) => (quantity = e.target.value)
       );
-      console.log(color);
+      
       const addToCartBtn = document.getElementById("addToCart");
       addToCartBtn.addEventListener("click", (e) => {
-        // test si pas quantité ni couleur
-        if (color != "none" && quantity > 0) {
+        if (/*color != null &&*/ color != "" && quantity > 0) {
           let product = {
             id: selectedProduct._id,
-            //price: selectedProduct.price, enlever le prix !!
             color: color,
             quantity: parseInt(quantity),
           };
+          
           addCart(product);
         } else {
           console.error("pas de quantité ni couleurs");
         }
 
-        //test
+        
       });
-    });
+    })
+    .catch((err) => {
+      console.error("ERREUR CRITIQUE");
+      });
 }
 
-//insert all HTML/DOM elements
+// HTML elements/attributes/nodes
 function insertElements(product) {
   document.title = `${product.name}`;
 
@@ -96,15 +102,14 @@ function getCart() {
 //get the product
 function addCart(product) {
   let cart = getCart();
-  console.log(cart);
+  
   let foundProduct = cart.find(
     (element) => element._id == product._id && element.color == product.color
   );
-  console.log(foundProduct);
+  
 
   if (foundProduct != undefined) {
-    foundProduct.quantity += foundProduct.quantity;
-    console.log(foundProduct);
+    foundProduct.quantity += product.quantity
   } else {
     cart.push(product);
   }
@@ -113,5 +118,4 @@ function addCart(product) {
 
 fetchProduct();
 
-// ne pas enregistrer les prix sur le localstorage !!!
-// le title de la page HTML n'est pas défini !!!
+

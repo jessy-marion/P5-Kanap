@@ -1,4 +1,4 @@
-/******** confirmation ***********/
+/*********** confirmation ***********/
 
 //remove localStorage
 localStorage.removeItem("cart");

@@ -1,4 +1,4 @@
-/******** product ***********/
+/*********** product ***********/
 
 let colorsChoice = document.getElementById("colors");
 let quantityInput = document.getElementById("quantity");
@@ -27,7 +27,6 @@ function fetchProduct() {
       
 
       // color/quantity selection & save the datas in an object
-      // let color = null;
       colorsChoice.addEventListener("change", (e) => {
         color = e.target.value;
       });
@@ -39,7 +38,7 @@ function fetchProduct() {
       
       const addToCartBtn = document.getElementById("addToCart");
       addToCartBtn.addEventListener("click", (e) => {
-        if (/*color != null &&*/ color != "" && quantity > 0) {
+        if (color != "" && quantity > 0) {
           let product = {
             id: selectedProduct._id,
             color: color,

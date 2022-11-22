@@ -1,4 +1,4 @@
-/******** cart ***********/
+/*********** cart ***********/
 
 //get data inside the LocalStorage
 const cart = JSON.parse(localStorage.getItem("cart"));
@@ -30,15 +30,15 @@ function fetchProduct() {
     })
     .then((products) => {
       
-      calculateCart(products);
+      displayingCart(products);
     })
 }
 
-// calculate price & quantity
-function calculateCart(products) {
-  if (cart) {     // []
-  cartSection.innerHTML = "";
-  totalPrice.innerHTML = "0"; // innerHTML
+// calculate price/quantity & display the cart
+function displayingCart(products) {
+  if (cart) {    
+  cartSection.innerText = "";
+  totalPrice.innerText = "0"; 
   allPrices = [];
   cart.forEach((article, index) => {
     for (let i = 0; i < products.length; i++) {
@@ -67,8 +67,8 @@ function order() {
       productId.push(JSON.parse(localStorage.getItem("cart"))[i].id);
     });
 
-    //post to server
-    fetch( // supprimer const & await
+    //post to server & redirection
+    fetch( 
       "http://localhost:3000/api/products/order",
       {
         method: "POST",
@@ -92,12 +92,12 @@ function order() {
   });
 }
 
-//form validation => utiliser onblur
+//form validation
 function form() {
   let firstName = document.getElementById("firstName");
   let firstNameErrorMsg = document.getElementById("firstNameErrorMsg");
 
-  firstName.addEventListener("change", (e) => { // remplacer par change "event"
+  firstName.addEventListener("change", (e) => { 
     if (onlyLetters.test(e.target.value)) {
       dataOrder.contact.firstName = e.target.value;
       firstNameErrorMsg.innerText = "";
@@ -154,6 +154,7 @@ function form() {
     }
   });
 }
+
 //insert HTML/ DOM elements
 function insertElements(element, cart) {
   let product = document.createElement("article");

@@ -184,7 +184,7 @@ function insertElements(element, cart) {
     "cart__item__content__settings__quantity"
   );
   let quantity = document.createElement("p");
-  quantity.innerText = `Qté : ${cart.quantity}`;
+  quantity.innerText = `Qté : `; // !!!!
   let input = document.createElement("input");
   input.setAttribute("type", `number`);
   input.setAttribute("name", `itemQuantity`);
@@ -192,6 +192,7 @@ function insertElements(element, cart) {
   input.setAttribute("max", `100`);
   input.setAttribute("value", `0`); 
   input.classList.add("itemQuantity");
+  input.value = `${cart.quantity}`
   let cartItemContentSettingsDelete = document.createElement("div");
   cartItemContentSettingsDelete.classList.add(
     "cart__item__content__settings__delete"
@@ -221,17 +222,20 @@ function change(element, quantity, selectedProduct) {
   element.addEventListener("change", (e) => {
     if (
       element.closest("article").dataset.id == selectedProduct.id &&
-      element.closest("article").dataset.color == selectedProduct.color &&
-      e.target.value != ""
+      element.closest("article").dataset.color == selectedProduct.color
     ) {
+      if (e.target.value <= 100) {
+        
       cart[cart.indexOf(selectedProduct)].quantity = parseInt(e.target.value);
       localStorage.setItem("cart", JSON.stringify(cart));
+    
 
       selectedProduct.quantity = parseInt(e.target.value);
       fetchProduct();
-      quantity.innerText = `Qté : ${
-        cart[cart.indexOf(selectedProduct)].quantity 
-      }`;
+      // quantity.innerText = `Qté : ${
+      //   cart[cart.indexOf(selectedProduct)].quantity 
+      // }`;
+    }
     }
   });
 }

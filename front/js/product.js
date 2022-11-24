@@ -2,6 +2,7 @@
 
 let colorsChoice = document.getElementById("colors");
 let quantityInput = document.getElementById("quantity");
+let color = "";
 
 //Get the id of the selected product on the URL
 const productID = new URL(window.location.href).searchParams.get("id");
@@ -47,7 +48,7 @@ function fetchProduct() {
           
           addCart(product);
         } else {
-          console.error("pas de quantité ni couleurs");
+          console.error("pas de quantité ni couleur");
         }
 
         
@@ -100,19 +101,29 @@ function getCart() {
 
 //get the product
 function addCart(product) {
-  let cart = getCart();
+  if (product.quantity <= 100) {
+    
   
+  let cart = getCart();
+
+  console.log(cart);
+
+
   let foundProduct = cart.find(
     (element) => element._id == product._id && element.color == product.color
   );
   
+  console.log(foundProduct);
 
-  if (foundProduct != undefined) {
-    foundProduct.quantity += product.quantity
-  } else {
-    cart.push(product);
-  }
+if (foundProduct == undefined) {
+  cart.push(product)
+} else if (foundProduct != undefined && foundProduct.quantity + product.quantity <= 100) {
+  foundProduct.quantity += product.quantity
+}
+
   saveCart(cart);
+}
+
 }
 
 fetchProduct();
